@@ -1,0 +1,14 @@
+{
+  "collections": [
+    "cambriaislands"
+  ],
+  "undercutThresholdPercent": 0,
+  "telegramBotToken": "8540060454:AAHa-hT8m3gOEPjp2Xynd-HivJCCsXKFpCc",
+  "telegramChatId": "7145530480",
+  "enableNewListingAlerts": true,
+  "enableSaleAlerts": true,
+  "enableFloorUpdateAlerts": true,
+  "priceAlertMin": 0.1,
+  "priceAlertMax": 0.001,
+  "enablePriceTriggerAlerts": true
+}

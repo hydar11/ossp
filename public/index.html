@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenSea Floor Monitor - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f0f0f;
+            min-height: 100vh;
+            padding: 10px;
+            font-size: 13px;
+            color: #e5e7eb;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid #2d2d2d;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            margin-bottom: 5px;
+            font-size: 20px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-badge.running {
+            background: #10b981;
+            color: #000000;
+        }
+
+        .status-badge.stopped {
+            background: #ef4444;
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid #2d2d2d;
+        }
+
+        .card h2 {
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #9ca3af;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 6px 10px;
+            border: 2px solid #2d2d2d;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: border-color 0.2s;
+            background: #0f0f0f;
+            color: #e5e7eb;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: #1a1a1a;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 50px;
+            font-family: inherit;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 3px;
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+        .btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #4f46e5;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #10b981;
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+        }
+
+        .btn:disabled {
+            background: #374151;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .floor-item {
+            padding: 10px;
+            background: #0f0f0f;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #2d2d2d;
+        }
+
+        .floor-item h3 {
+            color: #9ca3af;
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .floor-item .price {
+            color: #6366f1;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .event-item {
+            padding: 8px;
+            background: #0f0f0f;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            border-left: 3px solid #6366f1;
+            border: 1px solid #2d2d2d;
+            border-left: 3px solid #6366f1;
+        }
+
+        .event-item.undercut {
+            border-left-color: #ef4444;
+            background: #1a0f0f;
+        }
+
+        .event-item.price_alert {
+            border-left-color: #f59e0b;
+            background: #1a1410;
+        }
+
+        .event-item .time {
+            color: #6b7280;
+            font-size: 11px;
+        }
+
+        .alert {
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .alert-success {
+            background: #064e3b;
+            color: #6ee7b7;
+            border: 1px solid #10b981;
+        }
+
+        .alert-error {
+            background: #450a0a;
+            color: #fca5a5;
+            border: 1px solid #ef4444;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .refresh-btn {
+            float: right;
+            background: transparent;
+            border: 2px solid #6366f1;
+            color: #6366f1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #6366f1;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #2d2d2d;
+        }
+
+        .control-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 10px;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .stop-btn {
+            background: #ef4444;
+        }
+
+        .stop-btn:hover {
+            background: #dc2626;
+        }
+
+        .start-btn {
+            background: #10b981;
+        }
+
+        .start-btn:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔷 OpenSea Floor Monitor Dashboard</h1>
+            <p>
+                <span class="status-badge running" id="statusBadge">● Running</span>
+                <button class="control-btn stop-btn" id="stopBtn" onclick="stopBot()">⏹️ Stop Listening</button>
+                <button class="control-btn start-btn hidden" id="startBtn" onclick="startBot()">▶️ Start Listening</button>
+            </p>
+        </div>
+
+        <div class="grid">
+            <!-- Settings Card -->
+            <div class="card">
+                <h2>⚙️ Settings</h2>
+                <div id="settingsAlert" class="hidden"></div>
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label>Collections to Monitor</label>
+                        <textarea id="collections" placeholder="cambriaislands,pudgypenguins,azuki"></textarea>
+                        <small>Comma-separated collection slugs</small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enablePriceTriggerAlerts">
+                        <label for="enablePriceTriggerAlerts"><strong>Enable Price Trigger Alerts</strong></label>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🔻 Alert When Price BELOW (ETH)</label>
+                        <input type="number" id="priceAlertMin" step="0.001" placeholder="e.g., 0.5">
+                        <small>Alert when listing price is below this (e.g., 0.5 ETH)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🔺 Alert When Price ABOVE (ETH)</label>
+                        <input type="number" id="priceAlertMax" step="0.001" placeholder="e.g., 2.0">
+                        <small>Alert when listing price is above this (e.g., 2.0 ETH)</small>
+                    </div>
+
+                    <button type="submit" class="btn">Save Settings</button>
+                </form>
+            </div>
+
+            <!-- Telegram Settings Card -->
+            <div class="card">
+                <h2>📱 Telegram Settings</h2>
+                <div id="telegramAlert" class="hidden"></div>
+                <form id="telegramForm">
+                    <div class="form-group">
+                        <label>Chat ID</label>
+                        <input type="text" id="telegramChatId" placeholder="123456789">
+                        <small>Your Telegram chat ID (Bot token set in .env)</small>
+                    </div>
+
+                    <button type="submit" class="btn">Save Telegram Settings</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
