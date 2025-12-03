@@ -103,6 +103,7 @@ async function fetchPlayer(address, attempt = 1) {
           faction: ent.FACTION_CID ?? null,
           complete: ent.COMPLETE_CID ?? null,
           name: ent.NAME_CID ?? null,
+          image: ent.IMG_URL_CID ?? ent.IMG_CID ?? ent.data?.IMG_URL_CID ?? ent.data?.image ?? "",
           updatedAt: ent.updatedAt ?? ""
         });
       }
