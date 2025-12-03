@@ -344,6 +344,7 @@ function generatePetsById(pets) {
       faction: p.faction,
       complete: p.complete,
       name: p.name,
+      image: p.image || "",
       updatedAt: p.updatedAt
     };
   }
